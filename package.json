@@ -1,0 +1,35 @@
+{
+  "name": "ostoslista",
+  "version": "1.0.0",
+  "description": "App for controlling shopping list",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel server.js --out-dir build",
+    "dev-start": "babel-watch server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/genie9/shoppinglist.git"
+  },
+  "author": "genie,mlitola",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/genie9/shoppinglist/issues"
+  },
+  "homepage": "https://github.com/genie9/shoppinglist#readme",
+  "dependencies": {
+    "@babel/polyfill": "^7.6.0",
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "mongodb": "^3.3.2",
+    "mongoose": "^5.7.3",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/watch": "7.0.0"
+  }
+}
