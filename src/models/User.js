@@ -37,7 +37,7 @@ userSchema.static.findByLogin = async function (login) {
 
 //const User = mongoose.model('User', userSchema)
 
-itemListSchema.set('toJSON', {
+userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
