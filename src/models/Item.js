@@ -1,16 +1,43 @@
-import mongoose from 'mongoose'
+const dotenv = require('dotenv')
+dotenv.config()
+
+const mongoose = require('mongoose')
+mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
+  .then(result => {
+    console.log('connected to MongoDB')
+})
+  .catch((error) => {
+    console.log('error connecting to MongoDB:', error.message)
+})
 
 const itemSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
+  /*
   user: {
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User',
   },
+  */
+  name: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  created: {
+    type: Date,
+    required: true,
+  },
+  modified: {
+    type: Date,
+    required: false
+  },
 })
 
-const Item = mongoose.model('Item', itemSchema)
+itemSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
 
-export default Item;
+module.exports =  mongoose.model('Item', itemSchema)

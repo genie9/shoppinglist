@@ -5,6 +5,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+  image: {
+    type: String,
+  },
+  items: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Item'
+  }]
 })
 
 userSchema.static.findByLogin = async function (login) {
@@ -19,6 +26,14 @@ userSchema.static.findByLogin = async function (login) {
   return user
 }
 
-const User = mongoose.model('User', userSchema)
+//const User = mongoose.model('User', userSchema)
 
-export default User
+itemListSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+module.exports = mongoose.model('User', userSchema)
