@@ -11,12 +11,12 @@ mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
 })
 
 const itemSchema = new mongoose.Schema({
-  /*
+  
   user: {
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User',
   },
-  */
+  
   name: {
     type: String,
     unique: true,

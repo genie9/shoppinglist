@@ -7,8 +7,25 @@ const express = require('express')
 const app = express()
 const Item = require('./src/models/Item')
 const ItemList = require('./src/models/ItemList')
+const User = require('./src/models/User')
+
+
 
 app.use(express.json())
+
+app.post('/user/:name', (req, res) => {
+  const name = req.params.name
+  console.log(name)
+
+  const user = new User({
+    username: name,
+    created: moment.now()
+  })
+  user.save().then( savedUser => {
+    res.status(200).json(savedUser)
+    console.log('Profile is saved')
+  })
+})
 
 app.post('/itemlist', (req, res) => {
   const itemlist = new ItemList({
@@ -32,13 +49,16 @@ app.get('/itemlist', (req, res) => {
   })
 })
 
-app.post('/items/:name', (req, res) => {
+app.post('/items/:name/ptofile/:profile', (req, res) => {
   const name = req.params.name
-  console.log(name)
+  const profile = req.params.profile
+
+  console.log(name, profile)
 
   const item = new Item({
     name: name,
-    created: moment.now()
+    created: moment.now(),
+    user: profile
   })
   item.save().then(savedItem => {
     res.json(savedItem.toJSON())

@@ -5,8 +5,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+  created: {
+    type: Date,
+    required: true,
+  },
+  modified: {
+    type: Date,
+    required: false
+  },
   image: {
     type: String,
+    required: false
   },
   items: [{
     type: mongoose.Schema.Types.ObjectId,
