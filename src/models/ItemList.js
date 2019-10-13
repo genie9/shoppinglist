@@ -11,7 +11,7 @@ mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
 })
 
 const itemListSchema = new mongoose.Schema({
-  item: [{
+  items: [{
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Item'
   }],

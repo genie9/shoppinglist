@@ -27,6 +27,8 @@ app.post('/user/:name', (req, res) => {
   })
 })
 
+app.get
+
 app.post('/itemlist', (req, res) => {
   const itemlist = new ItemList({
     created: moment.now(),
@@ -49,24 +51,44 @@ app.get('/itemlist', (req, res) => {
   })
 })
 
-app.post('/items/:name/ptofile/:profile', (req, res) => {
+//ptofile/:profile
+app.post('/items/lista/:list/name/:name', (req, res) => {
   const name = req.params.name
-  const profile = req.params.profile
+  const profile = req.params.list
 
-  console.log(name, profile)
+  console.log(name, list)
 
+  const itemlist = ItemList.findOne({isArchived: false})
+  console.log('itemlist', itemlist)
+
+  if ( itemlist === 'undefined') {
+    itemlist = new ItemList({
+      created: moment.now(),
+      isArchived: false
+    })
+    itemlist.save().then(savedList => {
+      console.log('New ItemList saved!')
+    })
+  }
+   
   const item = new Item({
     name: name,
     created: moment.now(),
     user: profile
   })
+
   item.save().then(savedItem => {
     res.json(savedItem.toJSON())
     console.log('Item saved!')
-  //  mongoose.connection.close()
   })
-})
+  
+  itemlist.items.push(item)
+  itemlist.save()
 
+})
+/**
+ * 
+ */
 app.get('/items', (req, res) => {
   Item.find({}).then(items => {
     res.status(200).json(items)

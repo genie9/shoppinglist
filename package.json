@@ -7,7 +7,7 @@
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel server.js --out-dir build",
-    "dev": "babel-watch server.js"
+    "start-dev": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,6 @@
     "@babel/cli": "^7.6.2",
     "@babel/core": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
-    "@babel/watch": "7.0.0",
-    "babel-watch": "^7.0.0"
+    "nodemon": "^1.19.3"
   }
 }
