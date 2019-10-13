@@ -8,8 +8,12 @@ const app = express()
 const Item = require('./src/models/Item')
 const ItemList = require('./src/models/ItemList')
 const User = require('./src/models/User')
+const cors = require('cors')
 
-
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 app.use(express.json())
 
@@ -26,8 +30,6 @@ app.post('/user/:name', (req, res) => {
     console.log('Profile is saved')
   })
 })
-
-app.get
 
 app.post('/itemlist', (req, res) => {
   const itemlist = new ItemList({
@@ -52,11 +54,11 @@ app.get('/itemlist', (req, res) => {
 })
 
 //ptofile/:profile
-app.post('/items/lista/:list/name/:name', (req, res) => {
+app.post('/items/name/:name', (req, res) => {
   const name = req.params.name
   const profile = req.params.list
 
-  console.log(name, list)
+  // console.log(name, list)
 
   const itemlist = ItemList.findOne({isArchived: false})
   console.log('itemlist', itemlist)
@@ -82,14 +84,14 @@ app.post('/items/lista/:list/name/:name', (req, res) => {
     console.log('Item saved!')
   })
   
-  itemlist.items.push(item)
-  itemlist.save()
+  // itemlist.items.push(item)
+  // itemlist.save()
 
 })
 /**
  * 
  */
-app.get('/items', (req, res) => {
+app.get('/items', cors(corsOptions), (req, res) => {
   Item.find({}).then(items => {
     res.status(200).json(items)
     console.log(items)
@@ -97,7 +99,7 @@ app.get('/items', (req, res) => {
   })
 })
 
-app.get('/items/:id', (req, res) => {
+app.get('/items/:id', cors(corsOptions), (req, res) => {
   Item.findById(req.params.id).then(item => {
     res.json(item.toJSON)
     console.log(item)
