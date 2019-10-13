@@ -2,16 +2,26 @@
 
 //import models, { connectDb } from '../src/models'
 require('dotenv').config()
+const mongoose = require('mongoose')
 const moment = require('moment')
 const express = require('express')
 const app = express()
+
 const Item = require('./src/models/Item')
 const ItemList = require('./src/models/ItemList')
 const User = require('./src/models/User')
 
-
+//const models = require('./src/models/index')
 
 app.use(express.json())
+
+mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
+  .then(result => {
+    console.log('connected to MongoDB')
+})
+  .catch((error) => {
+    console.log('error connecting to MongoDB:', error.message)
+})
 
 app.post('/user/:name', (req, res) => {
   const name = req.params.name
@@ -26,8 +36,6 @@ app.post('/user/:name', (req, res) => {
     console.log('Profile is saved')
   })
 })
-
-app.get
 
 app.post('/itemlist', (req, res) => {
   const itemlist = new ItemList({
@@ -52,11 +60,11 @@ app.get('/itemlist', (req, res) => {
 })
 
 //ptofile/:profile
-app.post('/items/lista/:list/name/:name', (req, res) => {
+app.post('/items/name/:name', (req, res) => {
   const name = req.params.name
   const profile = req.params.list
 
-  console.log(name, list)
+  console.log(name)
 
   const itemlist = ItemList.findOne({isArchived: false})
   console.log('itemlist', itemlist)
@@ -81,10 +89,10 @@ app.post('/items/lista/:list/name/:name', (req, res) => {
     res.json(savedItem.toJSON())
     console.log('Item saved!')
   })
-  
+  /*
   itemlist.items.push(item)
   itemlist.save()
-
+*/
 })
 /**
  * 
