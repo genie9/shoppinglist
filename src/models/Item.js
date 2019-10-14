@@ -4,10 +4,10 @@ dotenv.config()
 const mongoose = require('mongoose')
 
 const itemSchema = new mongoose.Schema({
-  itemlists: [{
+  itemlists: {
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'ItemList'
-  }],
+  },
   /*
   user: {
     type: mongoose.Schema.Types.ObjectId, 

@@ -1,6 +1,5 @@
 'use strict';
 
-//import models, { connectDb } from '../src/models'
 require('dotenv').config()
 const mongoose = require('mongoose')
 const moment = require('moment')
@@ -27,7 +26,7 @@ mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
     console.log('error connecting to MongoDB:', error.message)
 })
 
-app.post('/user/:name', (req, res) => {
+app.post('/user/:name', async (req, res) => {
   const name = req.params.name
   console.log(name)
 
@@ -35,94 +34,99 @@ app.post('/user/:name', (req, res) => {
     username: name,
     created: moment.now()
   })
-  user.save().then( savedUser => {
+
+  const savedUser = await user.save()
+  if (savedUser){
     res.status(200).json(savedUser)
     console.log('Profile is saved')
-  })
+  }
 })
 
-app.post('/itemlists', (req, res) => {
+app.post('/itemlists', async (req, res) => {
   const itemlist = new ItemList({
     created: moment.now(),
     isArchived: false
   })
-  itemlist.save().then(savedList => {
+
+  const savedList = await itemlist.save()
+  if (savedList) {
     res.json(savedList.toJSON())
     console.log('ItemList saved!')
-  })
+  }
 })
 
-app.get('/itemlists', (req, res) => {
-  ItemList.find({ isArchived: false }).then(list => {
-    if (list !== 'undefined') {
-      res.status(200).json(list)
-    } else {
-      res.status(200).json({'message':'there are no active lists'})
-    }
-    console.log(list)
-  })
+app.get('/itemlists', async (req, res) => {
+  const itemlist = await ItemList.find({ isArchived: false }).populate('items')
+  
+  if (itemlist) {
+    res.status(200).json(itemlist)
+  } else {
+    res.status(200).json({'message':'there are no active lists'})
+  }
+  console.log(itemlist)
 })
 
-app.post('/items/name/:name', (req, res) => {
+app.post('/items/name/:name', async (req, res, next) => {
   const name = req.params.name
 
   console.log(name)
 
-  const itemlist = ItemList.findOne({isArchived: false})
+  let itemlist = await ItemList.findOne({isArchived: false})
   console.log('itemlist', itemlist)
 
-  if ( itemlist === 'undefined') {
+  if (!itemlist) {
     itemlist = new ItemList({
       created: moment.now(),
-      isArchived: false
-    })
-    itemlist.save().then(savedList => {
-      console.log('New ItemList saved!')
+      isArchived: false,
+      items: [],
     })
   }
-   
+  
   const item = new Item({
     name: name,
-    created: moment.now()
+    created: moment.now(),
+    itemlist: itemlist._id
   })
 
-  item.save().then(savedItem => {
+  try {
+    const savedItem = await item.save()
+    itemlist.items = itemlist.items.concat(savedItem._id)
+    await itemlist.save()
     res.json(savedItem.toJSON())
-    console.log('Item saved!')
-  })
-  
-  // itemlist.items.push(item)
-  // itemlist.save()
-
+  } catch(exception) {
+    next(exception)
+  }
 })
-/**
- * 
- */
-app.get('/items', cors(corsOptions), (req, res) => {
-  Item.find({}).then(items => {
+
+app.get('/items', cors(corsOptions), cors(corsOptions), async (req, res) => {
+  const items = await Item.find({})
+  if (items) {
     res.status(200).json(items)
-    console.log(items)
-  })
+  } else {
+    res.status(404).end()
+  }
 })
 
-app.get('/items/:id', cors(corsOptions), (req, res) => {
-  Item.findById(req.params.id).then(item => {
-    res.json(item.toJSON)
-    console.log(item)
-  })
+app.get('/items/:id', cors(corsOptions), async (req, res) => {
+  const item = await Item.findById(req.params.id)
+  if(item) {
+    res.status(200).json(item)
+  } else {
+    res.status(404).end()
+  }
 })
 
-app.get('/items/name/:name', (req, res) => {
-  Item.findOne({ name: req.params.name}).then(item => {
-    if (item !== 'undefined') {
-      res.status(200).json(item)
-    } else {
-      res.status(404).end()
-    }
-    console.log(item)
-  })
+app.get('/items/name/:name', cors(corsOptions), async (req, res) => {
+  const item = await Item.findOne({ name: req.params.name})
+  console.log(item)
+  if (item) {
+    res.status(200).json(item)
+  } else {
+    res.status(404).end()
+  }
 })
 
+//TODO change to mongo
 app.delete('/items/name/:name', (req, res) => {
   const name = req.params.name
   items = items.filter(item => item.name !== name)
