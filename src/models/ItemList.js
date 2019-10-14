@@ -2,15 +2,7 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 const mongoose = require('mongoose')
-/*
-mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
-  .then(result => {
-    console.log('connected to MongoDB')
-})
-  .catch((error) => {
-    console.log('error connecting to MongoDB:', error.message)
-})
-*/
+
 const itemListSchema = new mongoose.Schema({
   items: [{
     type: mongoose.Schema.Types.ObjectId, 

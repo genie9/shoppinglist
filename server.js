@@ -10,8 +10,12 @@ const app = express()
 const Item = require('./src/models/Item')
 const ItemList = require('./src/models/ItemList')
 const User = require('./src/models/User')
+const cors = require('cors')
 
-//const models = require('./src/models/index')
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 app.use(express.json())
 
@@ -37,7 +41,7 @@ app.post('/user/:name', (req, res) => {
   })
 })
 
-app.post('/itemlist', (req, res) => {
+app.post('/itemlists', (req, res) => {
   const itemlist = new ItemList({
     created: moment.now(),
     isArchived: false
@@ -48,7 +52,7 @@ app.post('/itemlist', (req, res) => {
   })
 })
 
-app.get('/itemlist', (req, res) => {
+app.get('/itemlists', (req, res) => {
   ItemList.find({ isArchived: false }).then(list => {
     if (list !== 'undefined') {
       res.status(200).json(list)
@@ -59,10 +63,8 @@ app.get('/itemlist', (req, res) => {
   })
 })
 
-//ptofile/:profile
 app.post('/items/name/:name', (req, res) => {
   const name = req.params.name
-  const profile = req.params.list
 
   console.log(name)
 
@@ -81,31 +83,29 @@ app.post('/items/name/:name', (req, res) => {
    
   const item = new Item({
     name: name,
-    created: moment.now(),
-    user: profile
+    created: moment.now()
   })
 
   item.save().then(savedItem => {
     res.json(savedItem.toJSON())
     console.log('Item saved!')
   })
-  /*
-  itemlist.items.push(item)
-  itemlist.save()
-*/
+  
+  // itemlist.items.push(item)
+  // itemlist.save()
+
 })
 /**
  * 
  */
-app.get('/items', (req, res) => {
+app.get('/items', cors(corsOptions), (req, res) => {
   Item.find({}).then(items => {
     res.status(200).json(items)
     console.log(items)
-  //mongoose.connection.close()
   })
 })
 
-app.get('/items/:id', (req, res) => {
+app.get('/items/:id', cors(corsOptions), (req, res) => {
   Item.findById(req.params.id).then(item => {
     res.json(item.toJSON)
     console.log(item)
@@ -141,11 +141,3 @@ app.use(unknownEndpoint)
 
 app.listen(process.env.PORT, process.env.HOST, () =>
     console.log(`Running on http://${process.env.HOST}:${process.env.PORT}!`))
-
-/*
-connectDb().then(async () => {
-  app.listen(process.env.PORT, process.env.HOST, () =>
-    console.log(`Running on http://${process.env.HOST}:${process.env.PORT}!`),
-  )
-})
-*/
