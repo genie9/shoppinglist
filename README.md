@@ -25,9 +25,10 @@ npm install
 
 ## Execution
 
-Before launching the project make sure you are in the project root and create folder ./src/data, then start mongodb instance:
+Before launching the project make sure you are in the project root, then create folder for needed by database and start mongodb instance:
 
 ```
+mkdir ./src/data
 mongod --dbpath=./src/data
 ```
 

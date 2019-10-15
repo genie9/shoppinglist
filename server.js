@@ -12,7 +12,7 @@ const User = require('./src/models/User')
 const cors = require('cors')
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: process.env.HOST,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
@@ -20,10 +20,10 @@ app.use(express.json())
 
 mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
   .then(result => {
-    console.log('connected to MongoDB')
+    console.log('Connected to MongoDB')
 })
   .catch((error) => {
-    console.log('error connecting to MongoDB:', error.message)
+    console.log('Error connecting to MongoDB:', error.message)
 })
 
 app.post('/user/:name', async (req, res) => {
@@ -51,7 +51,7 @@ app.post('/itemlists', async (req, res) => {
   const savedList = await itemlist.save()
   if (savedList) {
     res.json(savedList.toJSON())
-    console.log('ItemList saved!')
+    console.log('ItemList is saved')
   }
 })
 
@@ -63,16 +63,12 @@ app.get('/itemlists', async (req, res) => {
   } else {
     res.status(200).json({'message':'there are no active lists'})
   }
-  console.log(itemlist)
 })
 
 app.post('/items/name/:name', async (req, res, next) => {
   const name = req.params.name
 
-  console.log(name)
-
   let itemlist = await ItemList.findOne({isArchived: false})
-  console.log('itemlist', itemlist)
 
   if (!itemlist) {
     itemlist = new ItemList({
@@ -93,6 +89,7 @@ app.post('/items/name/:name', async (req, res, next) => {
     itemlist.items = itemlist.items.concat(savedItem._id)
     await itemlist.save()
     res.json(savedItem.toJSON())
+    console.log('Item is saved', item.name)
   } catch(exception) {
     next(exception)
   }
@@ -126,7 +123,7 @@ app.get('/items/name/:name', cors(corsOptions), async (req, res) => {
   }
 })
 
-//TODO change to mongo
+// TODO finish these...
 app.delete('/items/name/:name', (req, res) => {
   const name = req.params.name
   items = items.filter(item => item.name !== name)
