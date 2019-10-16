@@ -26,6 +26,50 @@ mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
     console.log('error connecting to MongoDB:', error.message)
 })
 
+app.get('/version', (req, res) => {
+  res.status(200).json({ 'api_version' : process.env.API_VERSION })
+})
+
+app.get('/items', cors(corsOptions), async (req, res) => {
+  const items = await Item.find({})
+  if (items) {
+    res.status(200).json(items)
+  } else {
+    res.status(404).end()
+  }
+})
+
+app.get('/items/:id', cors(corsOptions), async (req, res) => {
+  const item = await Item.findById(req.params.id)
+  if(item) {
+    res.status(200).json(item)
+  } else {
+    res.status(404).end()
+  }
+})
+
+app.get('/items/name/:name', cors(corsOptions), async (req, res) => {
+  const item = await Item.findOne({ name: req.params.name})
+  console.log(item)
+  if (item) {
+    res.status(200).json(item)
+  } else {
+    res.status(404).end()
+  }
+})
+
+app.get('/itemlists', async (req, res) => {
+  const itemlist = await ItemList.find({ isArchived: false }).populate('items')
+  
+  if (itemlist) {
+    res.status(200).json(itemlist)
+  } else {
+    res.status(200).json({'message':'there are no active lists'})
+  }
+  console.log(itemlist)
+})
+
+
 app.post('/user/:name', async (req, res) => {
   const name = req.params.name
   console.log(name)
@@ -53,17 +97,6 @@ app.post('/itemlists', async (req, res) => {
     res.json(savedList.toJSON())
     console.log('ItemList saved!')
   }
-})
-
-app.get('/itemlists', async (req, res) => {
-  const itemlist = await ItemList.find({ isArchived: false }).populate('items')
-  
-  if (itemlist) {
-    res.status(200).json(itemlist)
-  } else {
-    res.status(200).json({'message':'there are no active lists'})
-  }
-  console.log(itemlist)
 })
 
 app.post('/items/name/:name', async (req, res, next) => {
@@ -95,34 +128,6 @@ app.post('/items/name/:name', async (req, res, next) => {
     res.json(savedItem.toJSON())
   } catch(exception) {
     next(exception)
-  }
-})
-
-app.get('/items', cors(corsOptions), cors(corsOptions), async (req, res) => {
-  const items = await Item.find({})
-  if (items) {
-    res.status(200).json(items)
-  } else {
-    res.status(404).end()
-  }
-})
-
-app.get('/items/:id', cors(corsOptions), async (req, res) => {
-  const item = await Item.findById(req.params.id)
-  if(item) {
-    res.status(200).json(item)
-  } else {
-    res.status(404).end()
-  }
-})
-
-app.get('/items/name/:name', cors(corsOptions), async (req, res) => {
-  const item = await Item.findOne({ name: req.params.name})
-  console.log(item)
-  if (item) {
-    res.status(200).json(item)
-  } else {
-    res.status(404).end()
   }
 })
 

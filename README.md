@@ -36,3 +36,12 @@ After this project can be launched by npm:
 ```
 npm start
 ```
+
+## Testing
+Test that everything is up and running by doing a GET:
+```
+wget -qO- http://localhost:3001/version &> /dev/null
+```
+
+This should print out the version defined in the .env file
+
