@@ -40,9 +40,10 @@ npm start
 ```
 
 ## Testing
-Test that everything is up and running by doing a GET:
+Test that everything is up and running by doing a GET (use address defined in env):
 ```
-wget -qO- http://localhost:3001/version &> /dev/null
+wget -qO- http://localhost:3001/version && echo ""
+{"api_version":"1.0.0"}
 ```
 
 This should print out the version defined in the .env file
