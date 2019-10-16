@@ -23,6 +23,8 @@ Other project dependencies can be installed:
 npm install
 ```
 
+Additionally there is a template file for environment variables (.env.template). Rename this file into .env and add your own config there.
+
 ## Execution
 
 Before launching the project make sure you are in the project root and create folder ./src/data, then start mongodb instance:
