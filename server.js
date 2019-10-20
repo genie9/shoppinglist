@@ -12,13 +12,14 @@ const User = require('./src/models/User')
 const cors = require('cors')
 
 const corsOptions = {
-  origin: process.env.HOST,
+  origin: `${process.env.HOST}:${process.env.PORT}`,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
 app.use(express.json())
 
-mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
+mongoose
+  .connect(process.env.DATABASE_URL, {useNewUrlParser: true})
   .then(result => {
     console.log('Connected to MongoDB')
 })

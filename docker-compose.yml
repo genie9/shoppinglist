@@ -3,19 +3,22 @@ version: '3'
 services: 
   server:
     build: ./
-    expose:
-      - ${PORT}
-    environment:
-      API_HOST: ${HOST}
-      APP_SERVER_PORT: ${PORT}
+#    expose:
+#      - 8080
+#    environment:
+#      API_HOST: 127.0.0.1
+#      APP_SERVER_PORT: 3001
     ports:
-      - "3001:8000"
+      - "3001:3001"
     volumes:
       - .:/usr/app/
-    command: npm run dev
+#    command: npm run dev
     depends_on:
       - mongodb
   mongodb:
     image: mongo
-    volumes:
-      - ./src/data:/data/
+    ports:
+      - "27017:27017"
+#    volumes:
+#      - ./src/data:/data/
+#    command: mongod --dbpath=./src/data

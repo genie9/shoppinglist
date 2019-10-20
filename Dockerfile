@@ -1,6 +1,7 @@
 FROM node:12.12.0-alpine
 
 RUN mkdir -p /usr/app
+
 WORKDIR /usr/app
 
 COPY package*.json /usr/app/
